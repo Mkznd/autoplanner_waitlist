@@ -12,6 +12,7 @@ const Form = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [errors, setErrors] = useState(new Array<ErrorType>());
+  const [completed, setCompleted] = useState(false);
 
   const handleSubmit = async (event: any) => {
     event.preventDefault();
@@ -19,8 +20,8 @@ const Form = () => {
     if(handleValidation()) {
       // Here you would typically send the data to your database
       console.log(`Submitting Name ${name}, Email ${email}`);
-
       console.log(await createUser(name, email));
+      setCompleted(true);
     }
   }
 
@@ -50,6 +51,24 @@ const Form = () => {
     setErrors(errors.filter(e => e !==error));
   }
 
+  if(completed){
+    return (
+      <div className="min-h-screen bg-gray-100 py-6 flex flex-col justify-center sm:py-12">
+        <div className="relative py-3 sm:max-w-xl sm:mx-auto">
+          <div className="relative px-4 py-10 bg-white mx-8 md:mx-0 shadow rounded-3xl sm:p-10">
+            <div className="max-w-md mx-auto">
+              <div className="flex items-center space-x-5">
+                <div className="block pl-2 font-semibold text-xl self-start text-gray-700">
+                  <h2 className="leading-relaxed">Thank you for signing up!</h2>
+                  <p className="text-sm text-center text-gray-500 font-normal leading-relaxed">We will keep you updated.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
   return (
     <div className="min-h-screen bg-gray-100 py-6 flex flex-col justify-center sm:py-12">
       <div className="relative py-3 sm:max-w-xl sm:mx-auto">
