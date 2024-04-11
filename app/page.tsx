@@ -1,5 +1,7 @@
 'use client'
 import React, { useState } from 'react';
+import { sql } from '@vercel/postgres';
+import {createUser} from './queries/createUser';
 
 enum ErrorType {
   Name,
@@ -11,16 +13,26 @@ const Form = () => {
   const [email, setEmail] = useState('');
   const [errors, setErrors] = useState(new Array<ErrorType>());
 
-  const handleSubmit = (event: any) => {
+  const handleSubmit = async (event: any) => {
     event.preventDefault();
     console.log(`${name} ${email}`);
     if(handleValidation()) {
       // Here you would typically send the data to your database
       console.log(`Submitting Name ${name}, Email ${email}`);
+
+      console.log(await createUser(name, email));
     }
   }
 
   const handleValidation = () => {
+    // validate name
+    if (name.length < 2) {
+      console.log('Name should be at least 2 characters long '+name, );
+      if(errors.indexOf(ErrorType.Name) === -1) {
+        setErrors([...errors, ErrorType.Name]);
+      }
+      return false;
+    }
     // validate email using regex
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
@@ -30,15 +42,6 @@ const Form = () => {
       }
       return false;
     }
-    // validate name
-    if (name.length < 2) {
-      console.log('Name should be at least 2 characters long '+name, );
-      if(errors.indexOf(ErrorType.Name) === -1) {
-        setErrors([...errors, ErrorType.Name]);
-      }
-      return false;
-    }
-
     console.log(`Validating Name ${name}, Email ${email}`);
     return true;
   }
